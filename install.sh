@@ -15,6 +15,7 @@ fi
 
 echo "[1/5] Installing packages..."
 
+sudo pacman -Sy --noconfirm
 sudo pacman -S --needed --noconfirm \
     kitty \
     zsh \
