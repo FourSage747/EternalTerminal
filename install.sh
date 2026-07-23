@@ -1,34 +1,45 @@
 #!/bin/bash
 
+GREEN="\e[32m"
+RED="\e[31m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+RESET="\e[0m"
 set -e
 
 echo "================================="
-echo " Eternal Terminal Installer"
+echo -e " ${BLUE}Eternal Terminal Installer${RESET}"
 echo "================================="
 
-# Check Arch
-if ! command -v pacman &>/dev/null; then
-    echo "Error: This installer supports Arch Linux only."
+
+echo -e "${GREEN}[1/6] Installing packages...${RESET}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if command -v pacman >/dev/null 2>&1; then
+    echo "===Detected: pacman==="
+    bash "$SCRIPT_DIR/installers/arch.sh"
+
+elif command -v apt >/dev/null 2>&1; then
+    echo "===Detected: apt==="
+    bash "$SCRIPT_DIR/installers/debian.sh"
+
+elif command -v dnf >/dev/null 2>&1; then
+    echo "===Detected: dnf==="
+    bash "$SCRIPT_DIR/installers/fedora.sh"
+
+elif command -v zypper >/dev/null 2>&1; then
+    echo "===Detected: zypper==="
+    bash "$SCRIPT_DIR/installers/opensuse.sh"
+
+else
+    echo -e "${RED}===Unsupported Linux distribution===${RESET}"
     exit 1
 fi
 
 
-echo "[1/5] Installing packages..."
+echo -e "${GREEN}[2/6] Creating backups...${RESET}"
 
-sudo pacman -Sy --noconfirm
-sudo pacman -S --needed --noconfirm \
-    kitty \
-    zsh \
-    starship \
-    eza \
-    chafa \
-    zsh-syntax-highlighting \
-    otf-comicshanns-nerd
-
-
-echo "[2/5] Creating backups..."
-
-BACKUP_DIR="$HOME/.config/eternal-terminal-backup"
+BACKUP_DIR="$HOME/.config/your-terminal-backup"
 
 mkdir -p "$BACKUP_DIR"
 
@@ -47,21 +58,25 @@ if [ -f "$HOME/.zshrc" ]; then
     cp "$HOME/.zshrc" "$BACKUP_DIR/.zshrc"
 fi
 
+echo -e "${GREEN}[3/6] Installing fonts...${RESET}"
 
-echo "[3/5] Installing Kitty configuration..."
+bash "$SCRIPT_DIR/fonts/install-fonts.sh"
+
+
+echo -e "${GREEN}[4/6] Installing Kitty configuration...${RESET}"
 
 mkdir -p "$HOME/.config/kitty"
 
 cp -r kitty/* "$HOME/.config/kitty/"
 
 
-echo "[4/5] Installing Starship..."
+echo -e "${GREEN}[5/6] Installing Starship...${RESET}"
 
 cp starship/starship.toml \
     "$HOME/.config/starship.toml"
 
 
-echo "[5/5] Installing ZSH configuration..."
+echo -e "${GREEN}[6/6] Installing ZSH configuration...${RESET}"
 
 cp zsh/.zshrc "$HOME/.zshrc"
 
@@ -71,10 +86,11 @@ chmod +x "$HOME/.config/kitty/draw_art.sh"
 
 echo ""
 echo "================================="
-echo " Installation completed!"
+echo -e "${GREEN} Installation completed!${RESET}"
 echo "================================="
 echo ""
-echo "Restart your terminal or run:"
+echo -e "${BLUE}Restart your terminal or run:${RESET}"
 echo "exec zsh"
 echo ""
 echo "Enjoy Eternal Terminal!"
+echo -e "${YELLOW}If you didn't like it, you can always find your previos terminal version in ${BACKUP_DIR}${RESET}"
