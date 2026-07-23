@@ -11,16 +11,8 @@ if ! command -v pacman >/dev/null 2>&1; then
 fi
 
 echo -e "${BLUE}Installing Arch packages...${RESET}"
-
-
-PACKAGES=(
-    kitty
-    zsh
-    starship
-    eza
-    chafa
-    zsh-syntax-highlighting
-)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$SCRIPT_DIR/packages.conf"
 
 sudo pacman -Sy --needed --noconfirm \
     "${PACKAGES[@]}"

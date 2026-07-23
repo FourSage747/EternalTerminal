@@ -12,14 +12,8 @@ fi
 
 echo -e "${BLUE}Installing packages for Debian-based systems...${RESET}"
 
-PACKAGES=(
-    kitty
-    zsh
-    starship
-    eza
-    chafa
-    zsh-syntax-highlighting
-)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$SCRIPT_DIR/packages.conf"
 
 sudo apt update
 
