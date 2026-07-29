@@ -1,0 +1,269 @@
+{
+    "classes": [
+        {
+            "className": "TerminalBuffer",
+            "lineNumber": 11,
+            "methods": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "row",
+                            "type": "int"
+                        },
+                        {
+                            "name": "column",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 4,
+                    "isConst": true,
+                    "lineNumber": 59,
+                    "name": "characterAt",
+                    "returnType": "QString"
+                },
+                {
+                    "access": "public",
+                    "index": 5,
+                    "isConst": true,
+                    "lineNumber": 62,
+                    "name": "scrollbackSize",
+                    "returnType": "int"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "data",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 6,
+                    "lineNumber": 66,
+                    "name": "append",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "rows",
+                            "type": "int"
+                        },
+                        {
+                            "name": "columns",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 7,
+                    "lineNumber": 70,
+                    "name": "resizeTerminal",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 8,
+                    "isConst": true,
+                    "lineNumber": 73,
+                    "name": "totalRows",
+                    "returnType": "int"
+                },
+                {
+                    "access": "public",
+                    "index": 9,
+                    "isConst": true,
+                    "lineNumber": 76,
+                    "name": "visibleOffset",
+                    "returnType": "int"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "screenRow",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 10,
+                    "isConst": true,
+                    "lineNumber": 79,
+                    "name": "bufferRowFromScreenRow",
+                    "returnType": "int"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "amount",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 11,
+                    "lineNumber": 84,
+                    "name": "scroll",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 12,
+                    "isConst": true,
+                    "lineNumber": 87,
+                    "name": "scrollOffset",
+                    "returnType": "int"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "row",
+                            "type": "int"
+                        },
+                        {
+                            "name": "column",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 13,
+                    "isConst": true,
+                    "lineNumber": 90,
+                    "name": "wordAt",
+                    "returnType": "QVariantList"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "selection",
+                            "type": "TerminalSelection*"
+                        }
+                    ],
+                    "index": 14,
+                    "isConst": true,
+                    "lineNumber": 96,
+                    "name": "selectedText",
+                    "returnType": "QString"
+                }
+            ],
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "lineNumber": 16,
+                    "name": "cursorX",
+                    "notify": "cursorChanged",
+                    "override": false,
+                    "read": "cursorX",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 1,
+                    "lineNumber": 23,
+                    "name": "cursorY",
+                    "notify": "cursorChanged",
+                    "override": false,
+                    "read": "cursorY",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 2,
+                    "lineNumber": 30,
+                    "name": "rows",
+                    "notify": "screenChanged",
+                    "override": false,
+                    "read": "rows",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 3,
+                    "lineNumber": 37,
+                    "name": "columns",
+                    "notify": "screenChanged",
+                    "override": false,
+                    "read": "columns",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                }
+            ],
+            "qualifiedClassName": "TerminalBuffer",
+            "signals": [
+                {
+                    "access": "public",
+                    "index": 0,
+                    "lineNumber": 102,
+                    "name": "screenChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 1,
+                    "lineNumber": 104,
+                    "name": "cursorChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 2,
+                    "lineNumber": 106,
+                    "name": "scrollChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "rows",
+                            "type": "int"
+                        },
+                        {
+                            "name": "columns",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 3,
+                    "lineNumber": 108,
+                    "name": "resized",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "TerminalBuffer.h",
+    "outputRevision": 69
+}

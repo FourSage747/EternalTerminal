@@ -1,0 +1,2 @@
+set(__QT_DEPLOY_TARGET_EternalTerminalApp_FILE /home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminalApp)
+set(__QT_DEPLOY_TARGET_EternalTerminalApp_TYPE EXECUTABLE)

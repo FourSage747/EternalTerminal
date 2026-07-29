@@ -1,0 +1,11 @@
+set(qml_import_scanner_imports_count 9)
+set(qml_import_scanner_import_0 "CLASSNAME;QtQuick2Plugin;LINKTARGET;Qt6::qtquick2plugin;NAME;QtQuick;PATH;/usr/lib/qt6/qml/QtQuick;PLUGIN;qtquick2plugin;PLUGINISOPTIONAL;;PREFER;:/qt-project.org/imports/QtQuick/;RELATIVEPATH;QtQuick;TYPE;module;")
+set(qml_import_scanner_import_1 "CLASSNAME;QtQmlPlugin;LINKTARGET;Qt6::qmlplugin;NAME;QtQml;PATH;/usr/lib/qt6/qml/QtQml;PLUGIN;qmlplugin;PLUGINISOPTIONAL;;PREFER;:/qt-project.org/imports/QtQml/;RELATIVEPATH;QtQml;TYPE;module;")
+set(qml_import_scanner_import_2 "NAME;QML;PATH;/usr/lib/qt6/qml/QML;PREFER;:/qt-project.org/imports/QML/;RELATIVEPATH;QML;TYPE;module;")
+set(qml_import_scanner_import_3 "CLASSNAME;QtQmlModelsPlugin;LINKTARGET;Qt6::modelsplugin;NAME;QtQml.Models;PATH;/usr/lib/qt6/qml/QtQml/Models;PLUGIN;modelsplugin;PLUGINISOPTIONAL;;PREFER;:/qt-project.org/imports/QtQml/Models/;RELATIVEPATH;QtQml/Models;TYPE;module;")
+set(qml_import_scanner_import_4 "CLASSNAME;QtQmlWorkerScriptPlugin;LINKTARGET;Qt6::workerscriptplugin;NAME;QtQml.WorkerScript;PATH;/usr/lib/qt6/qml/QtQml/WorkerScript;PLUGIN;workerscriptplugin;PLUGINISOPTIONAL;;PREFER;:/qt-project.org/imports/QtQml/WorkerScript/;RELATIVEPATH;QtQml/WorkerScript;TYPE;module;")
+set(qml_import_scanner_import_5 "CLASSNAME;QtQuick_WindowPlugin;LINKTARGET;Qt6::quickwindow;NAME;QtQuick.Window;PATH;/usr/lib/qt6/qml/QtQuick/Window;PLUGIN;quickwindowplugin;PREFER;:/qt-project.org/imports/QtQuick/Window/;RELATIVEPATH;QtQuick/Window;TYPE;module;")
+set(qml_import_scanner_import_6 "NAME;ui;PATH;/home/the_eternal_engineer/Projects/EternalTerminal/src/ui;TYPE;directory;")
+set(qml_import_scanner_import_7 "COMPONENTS;/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminal/src/Main.qml;/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminal/src/ui/TerminalArea.qml;/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminal/src/ui/TitleBar.qml;/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminal/src/ui/WindowButton.qml;NAME;EternalTerminal;PATH;/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminal;PREFER;:/EternalTerminal/;RELATIVEPATH;EternalTerminal;TYPE;module;")
+set(qml_import_scanner_import_8 "NAME;ui;PATH;/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminal/src/ui;TYPE;directory;")
+

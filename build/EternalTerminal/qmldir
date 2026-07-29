@@ -1,0 +1,9 @@
+module EternalTerminal
+typeinfo EternalTerminalApp.qmltypes
+prefer :/EternalTerminal/
+Main 1.0 src/Main.qml
+TitleBar 1.0 src/ui/TitleBar.qml
+TerminalArea 1.0 src/ui/TerminalArea.qml
+WindowButton 1.0 src/ui/WindowButton.qml
+depends QtQuick
+

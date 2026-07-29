@@ -1,0 +1,5 @@
+/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminalApp_autogen/include/../XK67ICHAIF/moc_PtyProcess.cpp.json
+/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminalApp_autogen/include/../XK67ICHAIF/moc_TerminalBuffer.cpp.json
+/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminalApp_autogen/include/../XK67ICHAIF/moc_TerminalEngine.cpp.json
+/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminalApp_autogen/include/../XK67ICHAIF/moc_TerminalSelection.cpp.json
+/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminalApp_autogen/include/../YPKJ5OE7LN/moc_TerminalRenderer.cpp.json

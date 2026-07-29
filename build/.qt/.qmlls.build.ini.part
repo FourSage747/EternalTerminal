@@ -1,0 +1,3 @@
+[<SLASH>home<SLASH>the_eternal_engineer<SLASH>Projects<SLASH>EternalTerminal]
+importPaths="/home/the_eternal_engineer/Projects/EternalTerminal/build:/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminal:/usr/lib/qt6/qml"
+resourceFiles="/home/the_eternal_engineer/Projects/EternalTerminal/build/.qt/rcc/qmake_EternalTerminal.qrc:/home/the_eternal_engineer/Projects/EternalTerminal/build/.qt/rcc/EternalTerminalApp_raw_qml_0.qrc"

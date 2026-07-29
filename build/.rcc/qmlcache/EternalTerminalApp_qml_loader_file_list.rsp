@@ -1,0 +1,8 @@
+--resource
+/home/the_eternal_engineer/Projects/EternalTerminal/build/.qt/rcc/qmake_EternalTerminal.qrc
+--resource
+/home/the_eternal_engineer/Projects/EternalTerminal/build/.qt/rcc/EternalTerminalApp_raw_qml_0.qrc
+/EternalTerminal/src/Main.qml
+/EternalTerminal/src/ui/TitleBar.qml
+/EternalTerminal/src/ui/TerminalArea.qml
+/EternalTerminal/src/ui/WindowButton.qml
