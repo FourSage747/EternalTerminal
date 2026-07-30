@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=EternalTerminal
+Comment=Custom Qt6 terminal emulator
+Exec=EternalTerminalApp
+Icon=eternalterminal
+Terminal=false
+Categories=System;TerminalEmulator;
+StartupNotify=true

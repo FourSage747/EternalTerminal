@@ -1,9 +1,0 @@
-<RCC>
-  <qresource prefix="/EternalTerminal/">
-    <file alias="src/Main.qml">/home/the_eternal_engineer/Projects/EternalTerminal/src/Main.qml</file>
-    <file alias="src/ui/TitleBar.qml">/home/the_eternal_engineer/Projects/EternalTerminal/src/ui/TitleBar.qml</file>
-    <file alias="src/ui/TerminalArea.qml">/home/the_eternal_engineer/Projects/EternalTerminal/src/ui/TerminalArea.qml</file>
-    <file alias="src/ui/WindowButton.qml">/home/the_eternal_engineer/Projects/EternalTerminal/src/ui/WindowButton.qml</file>
-  </qresource>
-</RCC>
-

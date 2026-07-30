@@ -1,6 +1,0 @@
-<RCC>
-  <qresource prefix="/EternalTerminal">
-    <file alias="qmldir">/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminal/qmldir</file>
-  </qresource>
-</RCC>
-

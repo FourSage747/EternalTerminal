@@ -1,6 +1,0 @@
-<RCC>
-  <qresource prefix="/">
-    <file alias="/EternalTerminal">/home/the_eternal_engineer/Projects/EternalTerminal/build/EternalTerminal</file>
-
-  </qresource>
-</RCC>

@@ -35,6 +35,7 @@ qt_add_executable(EternalTerminalApp
 qt_add_qml_module(EternalTerminalApp
     URI EternalTerminal
     VERSION 1.0
+    RESOURCE_PREFIX /
     QML_FILES
        src/Main.qml
        src/ui/TitleBar.qml
@@ -48,4 +49,23 @@ target_link_libraries(EternalTerminalApp
         Qt6::Core
         Qt6::Gui
         Qt6::Quick
+)
+
+install(TARGETS EternalTerminalApp
+    RUNTIME DESTINATION bin
+)
+
+install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/EternalTerminal
+    DESTINATION lib/qt6/qml
+)
+
+install(
+    FILES resources/EternalTerminal.desktop
+    DESTINATION share/applications
+)
+
+install(
+    FILES resources/eternalterminal.png
+    DESTINATION share/icons/hicolor/256x256/apps
 )
