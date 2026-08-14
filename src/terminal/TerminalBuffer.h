@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QVariant>
 
-class TerminalSelection;
+class TerminalParser;
 
 class TerminalBuffer : public QObject
 {
@@ -86,16 +86,14 @@ public:
     Q_INVOKABLE
     int scrollOffset() const;
 
-    Q_INVOKABLE
-    QVariantList wordAt(
-        int row,
-        int column
-    ) const;
-
-    Q_INVOKABLE
-    QString selectedText(
-        TerminalSelection *selection
-    ) const;
+    void processCharacter(QChar c);
+    void moveCursorUp(int value);
+    void moveCursorDown(int value);
+    void moveCursorRight(int value);
+    void moveCursorLeft(int value);
+    void clearLine(int mode);
+    void deleteCharacters(int value);
+    void insertBlankCharacters(int value);
 
 signals:
 
@@ -110,7 +108,7 @@ signals:
 
 private:
 
-
+    TerminalParser* m_parser = nullptr;
     struct Cell
     {
         QChar character = ' ';
@@ -139,22 +137,6 @@ private:
     bool dirty = false;
 
 
-    enum class ParserState
-    {
-        Normal,
-        Escape,
-        CSI,
-        OSC
-    };
-
-
-    ParserState parserState = ParserState::Normal;
-
-
-    QString csiBuffer;
-    QString oscBuffer;
-
-
 
     void resize(int rows, int columns);
 
@@ -162,12 +144,6 @@ private:
 
 
     void putCharacter(QChar c);
-
-
-    void processCharacter(QChar c);
-
-
-    void processCSI(QString command);
 
 
 };

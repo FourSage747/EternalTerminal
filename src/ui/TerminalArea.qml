@@ -176,7 +176,9 @@ Rectangle {
             )
 
 
-            let word = terminalEngine.terminalBuffer.wordAt(
+            // ДОДАЛИ terminalEngine.terminalBuffer першим аргументом!
+            let word = terminalEngine.selection.wordAt(
+                terminalEngine.terminalBuffer,
                 cell.y,
                 cell.x
             )
@@ -216,8 +218,7 @@ Rectangle {
         )
         {
 
-            terminalEngine.copySelection();
-
+            renderer.copySelection(); // Викликаємо через renderer
             event.accepted = true;
             return;
         }
@@ -228,8 +229,11 @@ Rectangle {
             event.key === Qt.Key_V
         )
         {
-            terminalEngine.paste();
-
+            // Беремо текст з renderer і відправляємо в engine
+            let text = renderer.getClipboardText();
+            if(text !== "") {
+                terminalEngine.sendInput(text);
+            }
             event.accepted = true;
             return;
         }

@@ -1,8 +1,6 @@
 #include "TerminalEngine.h"
 
 #include <QDebug>
-#include <QGuiApplication>
-#include <QClipboard>
 
 
 
@@ -67,43 +65,4 @@ TerminalBuffer* TerminalEngine::buffer()
 TerminalSelection* TerminalEngine::selection()
 {
     return &terminalSelection;
-}
-
-void TerminalEngine::copySelection()
-{
-
-    QString text =
-        terminalBuffer.selectedText(
-            selection()
-        );
-
-
-    if(text.isEmpty())
-        return;
-
-
-    QClipboard *clipboard =
-        QGuiApplication::clipboard();
-
-
-    clipboard->setText(text);
-
-}
-void TerminalEngine::paste()
-{
-
-    QClipboard *clipboard =
-        QGuiApplication::clipboard();
-
-
-    QString text =
-        clipboard->text();
-
-
-    if(text.isEmpty())
-        return;
-
-
-    sendInput(text);
-
 }

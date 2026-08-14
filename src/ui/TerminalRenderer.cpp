@@ -7,6 +7,8 @@
 #include <QFont>
 #include <QFontMetrics>
 #include <QDebug>
+#include <QGuiApplication>
+#include <QClipboard>
 
 
 TerminalRenderer::TerminalRenderer(QQuickItem *parent)
@@ -15,9 +17,13 @@ TerminalRenderer::TerminalRenderer(QQuickItem *parent)
 
     setAntialiasing(false);
 
+    // Ініціалізація шрифту один раз
+    m_font = QFont("monospace");
+    m_font.setStyleHint(QFont::TypeWriter);
+    m_font.setPixelSize(16);
+    updateFontMetrics();
 
     cursorTimer = new QTimer(this);
-
     cursorTimer->setInterval(500);
 
 
@@ -37,6 +43,13 @@ TerminalRenderer::TerminalRenderer(QQuickItem *parent)
 
 }
 
+void TerminalRenderer::updateFontMetrics()
+{
+    QFontMetrics metrics(m_font);
+    m_cellWidth = metrics.horizontalAdvance('M');
+    m_cellHeight = metrics.height();
+    m_baseline = metrics.ascent();
+}
 
 TerminalBuffer* TerminalRenderer::buffer() const
 {
@@ -103,201 +116,68 @@ void TerminalRenderer::setSelection(
 
 void TerminalRenderer::paint(QPainter *painter)
 {
-
     qDebug() << "PAINT CALLED";
+    if(!m_buffer || m_cellWidth <= 0 || m_cellHeight <= 0) return;
 
-    if(!m_buffer)
-    {
-        return;
-    }
-
-
-    QFont font("monospace");
-
-    font.setStyleHint(QFont::TypeWriter);
-
-    font.setPixelSize(16);
-
-
-    painter->setFont(font);
-
-
+    painter->setFont(m_font);
     painter->setPen(Qt::white);
 
-
-    QFontMetrics metrics(font);
-
-
-    const int cellWidth = metrics.horizontalAdvance('M');
-
-    const int cellHeight = metrics.height();
-
-    const int baseline = metrics.ascent();
-
-
-    // for(int row = 0; row < m_buffer->rows(); row++)
-    // {
-
-    //     for(int column = 0; column < m_buffer->columns(); column++)
-    //     {
-
-    //         painter->drawText(
-
-    //             column * cellWidth,
-    //             row * cellHeight + baseline,
-
-    //             m_buffer->characterAt(row, column)
-
-    //         );
-
-    //     }
-
-    // }
     int historySize = m_buffer->scrollbackSize();
-    int offset =
-        historySize
-        - m_buffer->scrollOffset();
-
+    int offset = historySize - m_buffer->scrollOffset();
 
     for(int row = 0; row < m_buffer->rows(); row++)
     {
-
         int bufferRow = offset + row;
-
 
         for(int column = 0; column < m_buffer->columns(); column++)
         {
-
-            ///////
-            if(
-                m_selection &&
-                m_selection->contains(bufferRow, column)
-            )
+            if(m_selection && m_selection->contains(bufferRow, column))
             {
                 painter->fillRect(
-                    QRect(
-                        column * cellWidth,
-                        row * cellHeight,
-                        cellWidth,
-                        cellHeight
-                    ),
+                    QRect(column * m_cellWidth, row * m_cellHeight, m_cellWidth, m_cellHeight),
                     QColor("#44475a")
                 );
             }
 
-            ///////
-
             painter->drawText(
-
-                column * cellWidth,
-                row * cellHeight + baseline,
+                column * m_cellWidth,
+                row * m_cellHeight + m_baseline,
                 m_buffer->characterAt(bufferRow, column)
-
             );
-
         }
-
     }
 
-
-    if(
-        cursorVisible &&
-        m_buffer->scrollOffset() == 0
-    )
+    if(cursorVisible && m_buffer->scrollOffset() == 0)
     {
         painter->fillRect(
-
-            QRect(
-
-                m_buffer->cursorX() * cellWidth,
-                m_buffer->screenCursorY() * cellHeight,
-
-                2,
-                cellHeight
-
-            ),
-
+            QRect(m_buffer->cursorX() * m_cellWidth, m_buffer->screenCursorY() * m_cellHeight, 2, m_cellHeight),
             Qt::white
-
         );
     }
-
 }
 
-void TerminalRenderer::geometryChange(
-    const QRectF &newGeometry,
-    const QRectF &oldGeometry
-)
+void TerminalRenderer::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
+    QQuickPaintedItem::geometryChange(newGeometry, oldGeometry);
 
-    QQuickPaintedItem::geometryChange(
-        newGeometry,
-        oldGeometry
-    );
+    if(!m_buffer) return;
 
+    updateFontMetrics();
 
-    if(!m_buffer)
-        return;
+    if(m_cellWidth <= 0 || m_cellHeight <= 0) return;
 
+    int columns = width() / m_cellWidth;
+    int rows = height() / m_cellHeight;
 
-    QFont font("monospace");
+    if(columns < 1) columns = 1;
+    if(rows < 1) rows = 1;
 
-    font.setStyleHint(QFont::TypeWriter);
-
-    font.setPixelSize(16);
-
-
-    QFontMetrics metrics(font);
-
-
-    m_cellWidth = metrics.horizontalAdvance('M');
-    m_cellHeight = metrics.height();
-    m_baseline = metrics.ascent();
-
-
-    int cellWidth =
-        metrics.horizontalAdvance('M');
-
-
-    int cellHeight =
-        metrics.height();
-
-
-
-    int columns =
-        width() / m_cellWidth;
-
-
-    int rows =
-        height() / m_cellHeight;
-
-
-
-    if(columns < 1)
-        columns = 1;
-
-
-    if(rows < 1)
-        rows = 1;
-
-
-
-    qDebug()
-        << "TERMINAL RESIZE:"
-        << rows
-        << "x"
-        << columns;
-
-
+    qDebug() << "TERMINAL RESIZE:" << rows << "x" << columns;
 
     if(rows > 5 && columns > 5)
     {
-        m_buffer->resizeTerminal(
-            rows,
-            columns
-        );
+        m_buffer->resizeTerminal(rows, columns);
     }
-
 }
 
 QPoint TerminalRenderer::cellAt(
@@ -334,4 +214,19 @@ QPoint TerminalRenderer::cellAt(
         column,
         bufferRow
     );
+}
+
+void TerminalRenderer::copySelection()
+{
+    if(!m_selection || !m_buffer) return;
+
+    QString text = m_selection->selectedText(m_buffer);
+    if(text.isEmpty()) return;
+
+    QGuiApplication::clipboard()->setText(text);
+}
+
+QString TerminalRenderer::getClipboardText() const
+{
+    return QGuiApplication::clipboard()->text();
 }

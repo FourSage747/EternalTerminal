@@ -28,9 +28,6 @@ public:
 
     Q_INVOKABLE void sendInput(QString input);
 
-    Q_INVOKABLE void copySelection();
-    Q_INVOKABLE void paste();
-
     TerminalBuffer* buffer();
     TerminalSelection* selection();
 
