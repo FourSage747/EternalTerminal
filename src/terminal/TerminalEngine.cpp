@@ -50,8 +50,11 @@ void TerminalEngine::startShell()
     {
         qDebug()
             << "Failed to start PTY";
+        return;
     }
 
+    // НОВИЙ РЯДОК: Передаємо реальні розміри буфера одразу при старті
+    pty->resize(terminalBuffer.rows(), terminalBuffer.columns());
 }
 
 void TerminalEngine::sendInput(QString input)

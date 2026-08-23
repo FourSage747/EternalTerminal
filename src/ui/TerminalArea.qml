@@ -2,18 +2,30 @@ import QtQuick
 import EternalTerminal 1.0
 
 Rectangle {
-
-    color: "#0d0d0d"
-
+    color: "transparent"
     property var engine: terminalEngine
-
     focus: true
+    property real targetScroll: 0
+
+    Connections {
+        target: engine ? engine.terminalBuffer : null
+        
+        // Оновлюємо, коли користувач скролить мишкою
+        function onScrollChanged() {
+            targetScroll = engine.terminalBuffer.scrollOffset()
+        }
+        
+        // Оновлюємо, коли буфер сам змінює розмір (наприклад, при виводі нового тексту)
+        function onScreenChanged() {
+            targetScroll = engine.terminalBuffer.scrollOffset()
+        }
+    }
 
     Timer {
 
         id: autoScrollTimer
 
-        interval: 120
+        interval: 16 // ~60 FPS для дуже плавної анімації
 
         repeat: true
 
@@ -30,47 +42,30 @@ Rectangle {
 
             const lastMouseY = mouseArea.lastMouseY;
             const lastMouseX = mouseArea.lastMouseX;
+            let scrollAmount = 0.0;
 
-            if(lastMouseY < 10)
-            {
-                let speed = Math.ceil((30 - lastMouseY) / 10);
-
-                terminalEngine.terminalBuffer.scroll(
-                    Math.min(speed, 3)
-                );
-
-                let cell = renderer.cellAt(
-                    lastMouseX,
-                    0
-                );
-
-                terminalEngine.selection.update(
-                    terminalEngine.terminalBuffer.bufferRowFromScreenRow(
-                        cell.y
-                    ),
-                    cell.x
-                );
+            // Зона автоскролу: 20 пікселів від країв вікна
+            if(lastMouseY < 20) {
+                // Чим далі мишка, тим швидше дробовий скрол (до 0.6 рядка за кадр)
+                scrollAmount = (20 - lastMouseY) * 0.03;
+            } else if(lastMouseY > height - 20) {
+                scrollAmount = -((lastMouseY - (height - 20)) * 0.03);
             }
 
+            if(scrollAmount !== 0.0) {
+                // Плавно скролимо на дробову кількість рядків
+                terminalEngine.terminalBuffer.scroll(scrollAmount);
 
-            else if(lastMouseY > height - 10)
-            {
-                let speed = Math.ceil((lastMouseY - (height - 30)) / 10);
+                // Залишаємо координату Y в межах екрана, щоб виділення не "втікало"
+                let clampedY = Math.max(0, Math.min(lastMouseY, height - 1));
+                let cell = renderer.cellAt(lastMouseX, clampedY);
 
-                terminalEngine.terminalBuffer.scroll(
-                    Math.min(-speed, -3)
-                );
-
-                let cell = renderer.cellAt(
-                    lastMouseX,
-                    height - 1
-                );
-
+                // Оновлюємо виділення, передаючи точні координати миші
                 terminalEngine.selection.update(
-                    terminalEngine.terminalBuffer.bufferRowFromScreenRow(
-                        cell.y
-                    ),
-                    cell.x
+                    cell.y,
+                    cell.x,
+                    lastMouseX,
+                    lastMouseY
                 );
             }
 
@@ -81,14 +76,16 @@ Rectangle {
 
 
     TerminalRenderer {
-
         id: renderer
-
         anchors.fill: parent
-
+        anchors.margins: 8
         buffer: engine ? engine.terminalBuffer : null
-
         selection: engine ? engine.selection : null
+        // Передаємо нашу цільову позицію в C++ властивість
+        visualScrollOffset: targetScroll
+        // Передаємо кольори з теми у C++
+        textColor: root.theme.text
+        selectionColor: root.theme.selection
     }
 
     MouseArea {
@@ -108,14 +105,20 @@ Rectangle {
         property real lastMouseY: 0
 
         onWheel: function(wheel) {
-
-            if(wheel.angleDelta.y > 0)
-            {
-                terminalEngine.terminalBuffer.scroll(5);
+            let lines = 0;
+            
+            // Якщо це тачпад (апаратний плавний скрол у пікселях)
+            if (wheel.pixelDelta.y !== 0) {
+                // 18.0 - приблизна висота рядка. Мікро-рух тачпада = мікро-зсув тексту
+                lines = wheel.pixelDelta.y / 18.0; 
+            } 
+            // Якщо це звичайна мишка (крок коліщатка = 120 одиниць)
+            else {
+                lines = (wheel.angleDelta.y / 120.0) * 3.0; // 3 рядки за один клік
             }
-            else if(wheel.angleDelta.y < 0)
-            {
-                terminalEngine.terminalBuffer.scroll(-5);
+
+            if (lines !== 0) {
+                terminalEngine.terminalBuffer.scroll(lines);
             }
 
             wheel.accepted = true;
@@ -152,10 +155,12 @@ Rectangle {
 
             let cell = renderer.cellAt(mouse.x, mouse.y)
 
-            //======Work=====
+            // Передаємо точні пікселі миші
             terminalEngine.selection.update(
                 cell.y,
-                cell.x
+                cell.x,
+                mouse.x,
+                mouse.y
             )
         }
 

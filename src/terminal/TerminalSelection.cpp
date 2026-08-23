@@ -26,13 +26,18 @@ void TerminalSelection::begin(
 
     m_endRow = row;
     m_endColumn = column;
+
+    // Змушуємо UI миттєво реагувати на рух миші
+    emit selectionUpdated();
 }
 
 
 
 void TerminalSelection::update(
     int row,
-    int column
+    int column,
+    qreal exactX,
+    qreal exactY  
 )
 {
     if(!m_dragging)
@@ -42,6 +47,10 @@ void TerminalSelection::update(
     m_endRow = row;
     m_endColumn = column;
 
+    // Зберігаємо точну позицію
+    m_exactEndX = exactX;
+    m_exactEndY = exactY;
+
     if(
         row != m_startRow ||
         column != m_startColumn
@@ -49,6 +58,9 @@ void TerminalSelection::update(
     {
         m_active = true;
     }
+
+    // Змушуємо UI миттєво реагувати на рух миші
+    emit selectionUpdated();
 }
 
 
@@ -57,6 +69,8 @@ void TerminalSelection::clear()
 {
     m_active = false;
     m_dragging = false;
+    // Змушуємо UI миттєво реагувати на рух миші
+    emit selectionUpdated();
 }
 
 
@@ -142,6 +156,8 @@ void TerminalSelection::select(
     m_active = true;
 
     m_dragging = false;
+    // Змушуємо UI миттєво реагувати на рух миші
+    emit selectionUpdated();
 }
 int TerminalSelection::startRow() const
 {
@@ -187,11 +203,15 @@ QString TerminalSelection::selectedText(const TerminalBuffer* buffer) const
 
     for(int row = startR; row <= endR; row++)
     {
+        // Беремо реальну довжину тексту в рядку
+        int lineLen = buffer->lineLength(row);
+        
         int from = 0;
-        int to = cols - 1;
+        // Обмежуємо копіювання кінцем реального тексту
+        int to = lineLen - 1; 
 
         if(row == startR) from = startC;
-        if(row == endR) to = endC;
+        if(row == endR) to = std::min(to, endC);
 
         for(int col = from; col <= to; col++)
         {
@@ -246,4 +266,19 @@ QVariantList TerminalSelection::wordAt(const TerminalBuffer* buffer, int row, in
     result.append(end);
 
     return result;
+}
+
+bool TerminalSelection::isDragging() const
+{
+    return m_dragging;
+}
+
+qreal TerminalSelection::exactEndX() const
+{
+    return m_exactEndX;
+}
+
+qreal TerminalSelection::exactEndY() const
+{
+    return m_exactEndY;
 }

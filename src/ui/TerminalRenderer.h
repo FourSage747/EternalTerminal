@@ -25,6 +25,16 @@ class TerminalRenderer : public QQuickPaintedItem
         NOTIFY selectionChanged
     )
 
+    Q_PROPERTY(
+        qreal visualScrollOffset
+        READ visualScrollOffset
+        WRITE setVisualScrollOffset
+        NOTIFY visualScrollOffsetChanged
+    )
+
+    Q_PROPERTY(QColor textColor READ textColor WRITE setTextColor NOTIFY textColorChanged)
+    Q_PROPERTY(QColor selectionColor READ selectionColor WRITE setSelectionColor NOTIFY selectionColorChanged)
+
 public:
     explicit TerminalRenderer(QQuickItem *parent = nullptr);
 
@@ -40,6 +50,14 @@ public:
     Q_INVOKABLE void copySelection();
     Q_INVOKABLE QString getClipboardText() const;
 
+    qreal visualScrollOffset() const;
+    void setVisualScrollOffset(qreal offset);
+
+    QColor textColor() const;
+    void setTextColor(const QColor &color);
+    QColor selectionColor() const;
+    void setSelectionColor(const QColor &color);
+
 protected:
     void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
     TerminalBuffer* buffer() const;
@@ -48,6 +66,9 @@ protected:
 signals:
     void bufferChanged();
     void selectionChanged();
+    void visualScrollOffsetChanged();
+    void textColorChanged();
+    void selectionColorChanged();
 
 private:
     QTimer *cursorTimer = nullptr;
@@ -59,9 +80,15 @@ private:
     // Зберігаємо шрифт як член класу, щоб не створювати його постійно
     QFont m_font;
 
-    int m_cellWidth = 0;
-    int m_cellHeight = 0;
-    int m_baseline = 0;
+    qreal m_cellWidth = 0.0;
+    qreal m_cellHeight = 0.0;
+    qreal m_baseline = 0.0;
+    qreal m_visualScrollOffset = 0.0;
+
+    QString m_lineBuffer;
     
     void updateFontMetrics();
+
+    QColor m_textColor = Qt::white;
+    QColor m_selectionColor = QColor("#44475a");
 };

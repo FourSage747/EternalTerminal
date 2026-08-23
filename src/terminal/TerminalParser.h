@@ -23,7 +23,8 @@ private:
         Normal,
         Escape,
         CSI,
-        OSC
+        OSC,
+        Charset
     };
 
     ParserState parserState = ParserState::Normal;

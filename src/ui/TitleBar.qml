@@ -1,125 +1,54 @@
 import QtQuick
-
+import "controlButtons"
 
 Rectangle {
-
     id: bar
-
     height: 40
 
-    color: "#1a1a1a"
-
-
     property var window
+    property var themeManager
+    property var version: "0.2.0"
+    property color textColor: "#eeeeee"
 
-
-    Text {
-
-        anchors.centerIn: parent
-
-        text: "EternalTerminal"
-
-        color: "#eeeeee"
-
-        font.pixelSize: 16
-
-    }
+    radius: window.visibility === Window.Maximized ? 0 : 10
 
     Rectangle {
-
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.right: buttons.left
+        anchors.right: parent.right
+        height: parent.radius
+        color: parent.color
+    }
+
+    Text {
+        anchors.centerIn: parent
+        text: "EternalTerminal v" + version
+        color: textColor
+        font.pixelSize: 16
+    }
+
+    // Область перетягування вікна
+    Rectangle {
+        anchors.left: parent.left
+        anchors.right: controls.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-
-
         color: "transparent"
 
-
         MouseArea {
-
             anchors.fill: parent
-
-
-            property point clickPos
-
-
-            onPressed:
-            {
-                clickPos = Qt.point(mouse.x, mouse.y)
+            onPressed: {
+                if (window) window.startSystemMove()
             }
-
-
-            onPositionChanged:
-            {
-                if(mouse.buttons & Qt.LeftButton)
-                {
-                    window.x += mouse.x - clickPos.x
-                    window.y += mouse.y - clickPos.y
-                }
-            }
-
         }
-
     }
 
-
-
-    Row {
-
-        id: buttons
-
+    // --- НОВИЙ ОДНИЙ КОМПОНЕНТ КНОПОК ---
+    WindowControls {
+        id: controls
         anchors.right: parent.right
-
         anchors.verticalCenter: parent.verticalCenter
-
-
-        spacing: 4
-
-
-        WindowButton {
-
-            icon: "minimize"
-
-            onClicked:
-            {
-                window.showMinimized()
-            }
-
-        }
-
-
-        WindowButton {
-
-            icon: "maximize"
-
-            onClicked:
-            {
-                if(window.visibility === Window.Maximized)
-                    window.showNormal()
-                else
-                    window.showMaximized()
-            }
-
-        }
-
-
-
-        WindowButton {
-
-            icon: "close"
-
-            danger: true
-
-            onClicked:
-            {
-                window.close()
-            }
-
-        }
-
-
+        window: bar.window
+        themeManager: bar.themeManager
     }
-
-
 }

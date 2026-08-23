@@ -73,6 +73,8 @@ bool PtyProcess::start()
 
     if(pid == 0)
     {
+        // Кажемо програмам, що ми підтримуємо стандарт xterm та 256 кольорів
+        setenv("TERM", "xterm-256color", 1);
 
         execl(
             "/bin/bash",

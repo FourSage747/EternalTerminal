@@ -38,9 +38,13 @@ qt_add_qml_module(EternalTerminalApp
     RESOURCE_PREFIX /
     QML_FILES
        src/Main.qml
+       src/WindowResizer.qml
        src/ui/TitleBar.qml
        src/ui/TerminalArea.qml
-       src/ui/WindowButton.qml
+       src/ui/controlButtons/WindowButton.qml
+       src/ui/controlButtons/WindowControls.qml
+       src/ui/properties/Theme.qml
+       src/ui/popups/SettingsPopup.qml
 )
 
 

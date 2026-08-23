@@ -81,10 +81,13 @@ public:
     ) const;
 
     Q_INVOKABLE
-    void scroll(int amount);
+    void scroll(qreal amount);
 
     Q_INVOKABLE
-    int scrollOffset() const;
+    qreal scrollOffset() const;
+
+    Q_INVOKABLE
+    int lineLength(int row) const;
 
     void processCharacter(QChar c);
     void moveCursorUp(int value);
@@ -94,6 +97,17 @@ public:
     void clearLine(int mode);
     void deleteCharacters(int value);
     void insertBlankCharacters(int value);
+
+    void setCursorPosition(int row, int column);
+    void clearScreen(int mode);
+    void insertLines(int value);
+    void deleteLines(int value);
+    void setScrollRegion(int top, int bottom);
+    void reverseIndex();
+    void enableAlternateScreen();
+    void disableAlternateScreen();
+
+    QChar rawCharAt(int row, int column) const;
 
 signals:
 
@@ -128,9 +142,17 @@ private:
     int m_cursorColumn = 0;
     int m_lineEndColumn = 0;
     int m_inputStartColumn = 0;
-    int m_scrollOffset = 0;
+    qreal m_scrollOffset = 0.0;
     int m_lastScrollbackSize = 0;
     bool m_followOutput = true;
+    int m_marginTop = 0;
+    int m_marginBottom = 23;
+
+    // Змінні для альтернативного екрана
+    QVector<QVector<Cell>> m_primaryScreen;
+    int m_savedCursorRow = 0;
+    int m_savedCursorColumn = 0;
+    bool m_isAlternateScreen = false;
 
     QTimer *updateTimer = nullptr;
 

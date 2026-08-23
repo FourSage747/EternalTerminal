@@ -3,6 +3,7 @@
 #include "../terminal/TerminalBuffer.h"
 #include "../terminal/TerminalSelection.h"
 
+#include <QFontDatabase>
 #include <QPainter>
 #include <QFont>
 #include <QFontMetrics>
@@ -20,6 +21,7 @@ TerminalRenderer::TerminalRenderer(QQuickItem *parent)
     // Ініціалізація шрифту один раз
     m_font = QFont("monospace");
     m_font.setStyleHint(QFont::TypeWriter);
+    m_font.setKerning(false);
     m_font.setPixelSize(16);
     updateFontMetrics();
 
@@ -45,7 +47,14 @@ TerminalRenderer::TerminalRenderer(QQuickItem *parent)
 
 void TerminalRenderer::updateFontMetrics()
 {
-    QFontMetrics metrics(m_font);
+    // 1. Просимо ОС дати ідеальний фіксований шрифт
+    m_font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    m_font.setPixelSize(16);
+    m_font.setFixedPitch(true);
+    m_font.setKerning(false);
+
+    // 2. Рахуємо точні розміри в qreal (без втрати мікро-пікселів)
+    QFontMetricsF metrics(m_font);
     m_cellWidth = metrics.horizontalAdvance('M');
     m_cellHeight = metrics.height();
     m_baseline = metrics.ascent();
@@ -92,66 +101,126 @@ void TerminalRenderer::setBuffer(TerminalBuffer *buffer)
 
 }
 
-void TerminalRenderer::setSelection(
-    TerminalSelection *selection
-)
+qreal TerminalRenderer::visualScrollOffset() const
 {
+    return m_visualScrollOffset;
+}
 
-    if(m_selection == selection)
-    {
+void TerminalRenderer::setVisualScrollOffset(qreal offset)
+{
+    if(qFuzzyCompare(m_visualScrollOffset, offset))
         return;
-    }
 
+    m_visualScrollOffset = offset;
+    emit visualScrollOffsetChanged();
+    
+    // Обов'язково викликаємо update(), щоб перемалювати екран з новим зсувом
+    update();
+}   
+
+void TerminalRenderer::setSelection(TerminalSelection *selection)
+{
+    if(m_selection == selection) return;
+
+    // Відключаємо старі сигнали, щоб не було витоку пам'яті
+    if (m_selection) {
+        m_selection->disconnect(this);
+    }
 
     m_selection = selection;
 
+    // НОВЕ: Підключаємо сигнал оновлення до миттєвого перемальовування екрана
+    if (m_selection) {
+        connect(m_selection, &TerminalSelection::selectionUpdated, this, [this]() {
+            update();
+        });
+    }
 
     emit selectionChanged();
-
-
     update();
-
 }
-
 
 void TerminalRenderer::paint(QPainter *painter)
 {
-    qDebug() << "PAINT CALLED";
     if(!m_buffer || m_cellWidth <= 0 || m_cellHeight <= 0) return;
 
     painter->setFont(m_font);
-    painter->setPen(Qt::white);
+    painter->setPen(m_textColor);
 
     int historySize = m_buffer->scrollbackSize();
-    int offset = historySize - m_buffer->scrollOffset();
+    int integerOffset = static_cast<int>(m_visualScrollOffset);
+    qreal fractionalOffset = m_visualScrollOffset - integerOffset;
 
-    for(int row = 0; row < m_buffer->rows(); row++)
+    int offset = historySize - integerOffset;
+    qreal pixelShift = fractionalOffset * m_cellHeight; 
+    
+    int cols = m_buffer->columns();
+    
+    // Підганяємо розмір буфера без перестворення пам'яті
+    if (m_lineBuffer.size() != cols) {
+        m_lineBuffer.resize(cols);
+    }
+
+    for(int row = -1; row <= m_buffer->rows(); row++)
     {
         int bufferRow = offset + row;
+        if (bufferRow < 0 || bufferRow >= m_buffer->totalRows()) continue;
 
-        for(int column = 0; column < m_buffer->columns(); column++)
+        qreal yPos = row * m_cellHeight + pixelShift; 
+
+        // Отримуємо реальну довжину рядка без зайвих пробілів
+        int lineLen = m_buffer->lineLength(bufferRow);
+
+        for(int column = 0; column < cols; column++)
         {
             if(m_selection && m_selection->contains(bufferRow, column))
             {
-                painter->fillRect(
-                    QRect(column * m_cellWidth, row * m_cellHeight, m_cellWidth, m_cellHeight),
-                    QColor("#44475a")
-                );
+                // Малюємо фон ТІЛЬКИ якщо це реальний текст (або символ кінця рядка)
+                if (lineLen > 0 && column <= lineLen)
+                {
+                    qreal rectX = column * m_cellWidth;
+                    qreal rectWidth = m_cellWidth;
+
+                    // Плавне виділення: якщо ми зараз тягнемо мишку і це кінцева клітинка
+                    if (m_selection->isDragging() && 
+                        bufferRow == m_selection->endRow() && 
+                        column == m_selection->endColumn())
+                    {
+                        // Визначаємо напрямок виділення (зліва-направо чи справа-наліво)
+                        bool isForward = (m_selection->startRow() < m_selection->endRow()) || 
+                                        (m_selection->startRow() == m_selection->endRow() && m_selection->startColumn() <= m_selection->endColumn());
+
+                        if (isForward) {
+                            // Малюємо фон від початку клітинки рівно до позиції миші
+                            rectWidth = qBound(0.0, m_selection->exactEndX() - rectX, m_cellWidth);
+                        } else {
+                            // Якщо виділяємо у зворотний бік - малюємо від миші до кінця клітинки
+                            qreal exactX = qBound(rectX, m_selection->exactEndX(), rectX + m_cellWidth);
+                            rectWidth = (rectX + m_cellWidth) - exactX;
+                            rectX = exactX;
+                        }
+                    }
+
+                    painter->fillRect(
+                        QRectF(rectX, yPos, rectWidth, m_cellHeight),
+                        m_selectionColor
+                    );
+                }
             }
 
-            painter->drawText(
-                column * m_cellWidth,
-                row * m_cellHeight + m_baseline,
-                m_buffer->characterAt(bufferRow, column)
-            );
+            // Блискавично перезаписуємо символ у вже існуючій пам'яті
+            m_lineBuffer[column] = m_buffer->rawCharAt(bufferRow, column);
         }
+
+        // Малюємо всю лінію
+        painter->drawText(QPointF(0, yPos + m_baseline), m_lineBuffer);
     }
 
-    if(cursorVisible && m_buffer->scrollOffset() == 0)
+    if(cursorVisible && integerOffset == 0)
     {
         painter->fillRect(
-            QRect(m_buffer->cursorX() * m_cellWidth, m_buffer->screenCursorY() * m_cellHeight, 2, m_cellHeight),
-            Qt::white
+            QRectF(m_buffer->cursorX() * m_cellWidth, (m_buffer->screenCursorY() * m_cellHeight) + pixelShift, 2.0, m_cellHeight),
+            m_textColor
         );
     }
 }
@@ -180,40 +249,28 @@ void TerminalRenderer::geometryChange(const QRectF &newGeometry, const QRectF &o
     }
 }
 
-QPoint TerminalRenderer::cellAt(
-    qreal x,
-    qreal y
-) const
+QPoint TerminalRenderer::cellAt(qreal x, qreal y) const
 {
+    if(!m_buffer || m_cellWidth <= 0 || m_cellHeight <= 0) return QPoint(0,0);
 
-    if(
-        !m_buffer ||
-        m_cellWidth <= 0 ||
-        m_cellHeight <= 0
-    )
-    {
-        return QPoint(0,0);
-    }
-
+    qreal fractionalOffset = m_visualScrollOffset - static_cast<int>(m_visualScrollOffset);
+    int pixelShift = fractionalOffset * m_cellHeight;
 
     int column = int(x) / m_cellWidth;
+    
+    // Оскільки текст візуально зсунувся вниз (+pixelShift), ми маємо відняти це від координати миші
+    int visibleRow = 0;
+    if (y - pixelShift >= 0) {
+        visibleRow = int(y - pixelShift) / m_cellHeight;
+    } else {
+        visibleRow = -1; // Для безпеки, якщо курсор миші вище першого рядка
+    }
 
-    int visibleRow = int(y) / m_cellHeight;
+    int integerOffset = static_cast<int>(m_visualScrollOffset);
+    int offset = m_buffer->scrollbackSize() - integerOffset;
+    int bufferRow = offset + visibleRow;
 
-
-    int offset =
-        m_buffer->scrollbackSize()
-        - m_buffer->scrollOffset();
-
-
-    int bufferRow =
-        offset + visibleRow;
-
-
-    return QPoint(
-        column,
-        bufferRow
-    );
+    return QPoint(column, bufferRow);
 }
 
 void TerminalRenderer::copySelection()
@@ -229,4 +286,20 @@ void TerminalRenderer::copySelection()
 QString TerminalRenderer::getClipboardText() const
 {
     return QGuiApplication::clipboard()->text();
+}
+
+QColor TerminalRenderer::textColor() const { return m_textColor; }
+void TerminalRenderer::setTextColor(const QColor &color) {
+    if (m_textColor == color) return;
+    m_textColor = color;
+    emit textColorChanged();
+    update();
+}
+
+QColor TerminalRenderer::selectionColor() const { return m_selectionColor; }
+void TerminalRenderer::setSelectionColor(const QColor &color) {
+    if (m_selectionColor == color) return;
+    m_selectionColor = color;
+    emit selectionColorChanged();
+    update();
 }
