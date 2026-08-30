@@ -9,7 +9,7 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-
+    app.setDesktopFileName("EternalTerminal");
     qmlRegisterType<TerminalRenderer>(
         "EternalTerminal",
         1,

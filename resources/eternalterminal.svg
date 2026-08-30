@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="869" height="869" viewBox="0 0 869 869" fill="none">
+  <defs>
+    <linearGradient id="windowBg" x1="18" y1="32" x2="852" y2="829" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#252C37"/>
+      <stop offset="0.52" stop-color="#111820"/>
+      <stop offset="1" stop-color="#080D13"/>
+    </linearGradient>
+
+    <linearGradient id="headerBg" x1="22" y1="36" x2="850" y2="184" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2A303C"/>
+      <stop offset="1" stop-color="#111820"/>
+    </linearGradient>
+
+    <linearGradient id="logoGrad" x1="95" y1="615" x2="774" y2="285" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1787E8"/>
+      <stop offset="0.45" stop-color="#2CB7C8"/>
+      <stop offset="1" stop-color="#8CE83E"/>
+    </linearGradient>
+
+    <linearGradient id="glyphGrad" x1="524" y1="420" x2="680" y2="535" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#526176"/>
+      <stop offset="1" stop-color="#1B2430"/>
+    </linearGradient>
+
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000000" flood-opacity="0.48"/>
+    </filter>
+
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Terminal window -->
+  <rect x="17" y="35" width="835" height="792" rx="122" fill="url(#windowBg)" stroke="#35404E" stroke-width="3"/>
+  <rect x="28" y="45" width="813" height="139" rx="111" fill="url(#headerBg)"/>
+  <path d="M28 184H841" stroke="#05080C" stroke-width="7"/>
+  <path d="M28 184H841" stroke="#485361" stroke-opacity="0.48" stroke-width="1.5"/>
+
+  <!-- macOS-like controls -->
+  <g filter="url(#shadow)">
+    <circle cx="109" cy="116" r="22" fill="#FF5144"/>
+    <circle cx="109" cy="116" r="20.5" fill="none" stroke="#FF8379" stroke-opacity="0.65"/>
+    <circle cx="179" cy="116" r="22" fill="#FFC43B"/>
+    <circle cx="179" cy="116" r="20.5" fill="none" stroke="#FFE18B" stroke-opacity="0.65"/>
+    <circle cx="249" cy="116" r="22" fill="#27C84A"/>
+    <circle cx="249" cy="116" r="20.5" fill="none" stroke="#7DE98E" stroke-opacity="0.6"/>
+  </g>
+
+  <!-- Infinity symbol -->
+  <g filter="url(#shadow)">
+    <path d="M391 389
+             C328 322 273 291 221 294
+             C141 299 86 365 87 466
+             C88 570 154 639 248 642
+             C321 644 363 594 411 538
+             L506 425
+             C552 370 589 331 642 323
+             C722 311 783 370 784 469
+             C785 571 729 639 634 648
+             C558 655 512 612 471 550"
+          stroke="url(#logoGrad)"
+          stroke-width="62"
+          stroke-linecap="butt"
+          stroke-linejoin="round"/>
+    <path d="M391 389
+             C328 322 273 291 221 294
+             C141 299 86 365 87 466
+             C88 570 154 639 248 642
+             C321 644 363 594 411 538
+             L506 425
+             C552 370 589 331 642 323
+             C722 311 783 370 784 469
+             C785 571 729 639 634 648
+             C558 655 512 612 471 550"
+          stroke="#B9F6FF"
+          stroke-opacity="0.32"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+  </g>
+
+  <!-- Terminal prompt glyph -->
+  <g filter="url(#shadow)">
+    <path d="M541 422L586 459L541 496"
+          stroke="url(#glyphGrad)"
+          stroke-width="26"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    <path d="M619 518H670"
+          stroke="url(#glyphGrad)"
+          stroke-width="24"
+          stroke-linecap="round"/>
+    <path d="M541 422L586 459L541 496"
+          stroke="#9BA9BC"
+          stroke-opacity="0.62"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    <path d="M619 518H670"
+          stroke="#9BA9BC"
+          stroke-opacity="0.62"
+          stroke-width="1.5"
+          stroke-linecap="round"/>
+  </g>
+</svg>

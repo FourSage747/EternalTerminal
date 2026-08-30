@@ -70,6 +70,6 @@ install(
 )
 
 install(
-    FILES resources/eternalterminal.png
-    DESTINATION share/icons/hicolor/256x256/apps
+    FILES resources/eternalterminal.svg
+    DESTINATION share/icons/hicolor/scalable/apps
 )

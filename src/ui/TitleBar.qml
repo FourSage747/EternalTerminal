@@ -7,7 +7,7 @@ Rectangle {
 
     property var window
     property var themeManager
-    property var version: "0.2.0"
+    property var version: "0.2"
     property color textColor: "#eeeeee"
 
     radius: window.visibility === Window.Maximized ? 0 : 10

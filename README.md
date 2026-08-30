@@ -1,7 +1,7 @@
 # EternalTerminal
 
 <p align="center">
-  <img src="resources/eternalterminal.png" width="160" alt="EternalTerminal Logo">
+  <img src="resources/old/eternalterminal.png" width="160" alt="EternalTerminal Logo">
 </p>
 
 <h3 align="center">
