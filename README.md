@@ -84,7 +84,7 @@ cmake --build build
 Run:
 
 ```bash
-./build/EternalTerminalApp
+./build/eternal-terminal
 ```
 
 ---

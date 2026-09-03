@@ -14,8 +14,12 @@ find_package(Qt6 REQUIRED COMPONENTS
 
 qt_standard_project_setup()
 
+if(COMMAND qt_policy)
+    qt_policy(SET QTP0004 NEW)
+endif()
 
-qt_add_executable(EternalTerminalApp
+
+qt_add_executable(eternal-terminal
     src/main.cpp
     src/terminal/TerminalEngine.cpp
     src/terminal/TerminalEngine.h
@@ -32,7 +36,7 @@ qt_add_executable(EternalTerminalApp
 )
 
 
-qt_add_qml_module(EternalTerminalApp
+qt_add_qml_module(eternal-terminal
     URI EternalTerminal
     VERSION 1.0
     RESOURCE_PREFIX /
@@ -48,14 +52,14 @@ qt_add_qml_module(EternalTerminalApp
 )
 
 
-target_link_libraries(EternalTerminalApp
+target_link_libraries(eternal-terminal
     PRIVATE
         Qt6::Core
         Qt6::Gui
         Qt6::Quick
 )
 
-install(TARGETS EternalTerminalApp
+install(TARGETS eternal-terminal
     RUNTIME DESTINATION bin
 )
 

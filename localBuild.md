@@ -9,5 +9,5 @@ cd build
 cmake ..
 cmake --build . -j$(nproc)
 
-./EternalTerminalApp
+./eternal-terminal
 *****************
